@@ -12,10 +12,12 @@ try:
                                 port= "5432", 
                                 database="snort")
     cursor = connection.cursor()
-    print (connection.get_dsn_parameter(), "\n")
     cursor.execute("Select version()")
     record = cursor.fetchone()
-    print ("Youre connect to - ". record, "\n")
+    print ("Youre connect to - ", record, "\n")
+    cursor.execute("Select * from data")
+    record = cursor.fetchall()
+    print ("Youre connect to - ", record, "\n")
 
 except (Exception, Error) as error:
     print("Error while connecting to PostgreSQL", error)
