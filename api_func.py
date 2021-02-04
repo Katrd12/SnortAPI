@@ -1,7 +1,6 @@
-# import requests
-from typing import Counter
 import psycopg2
 from psycopg2 import Error
+import subprocess
 
 # BASE = "http://127.0.0.1:5000/"
 
@@ -40,7 +39,7 @@ def readRule():
     for line in fh:
         rules.append(line)
     return rules
-
+## Cắt chuỗi
 def splitString(iString):
     def sHeader():        
         header = iString[:iString.find("(")].rstrip().split(" ")
@@ -51,16 +50,6 @@ def splitString(iString):
         option = iString[iString.find("("):]
         return option
     return sHeader, sOption
-
-# h_pos = 0
-# for x in rule_d:
-#     rule_d[x] = header[h_pos]
-#     h_pos += 1
-# print(rule_d)
-# # rules.pop(r_pos)
-# # print(rules[0])
-# # rule_d["Status"] = ""
-# # rule_d["Action"] = ""
 
 def saveToLocal():
     try:
@@ -76,14 +65,13 @@ def saveToLocal():
                 for x in rule_d:
                     rule_d[x] = line[h_pos]
                     h_pos += 1
-                    if h_pos == 7 :
+                    if h_pos == 7:
                         rule_opt = line[h_pos+1]
                 if (rule_d["Status"] == False):
                     rule_d["Status"] = "#"
                 elif (rule_d["Status"] == True):
                     rule_d["Status"] = ""
                 rule = catRule(rule_opt)
-                print(rule)
                 rules.append(rule)
             print(rules[0]) 
             name = "local.rule"
@@ -93,6 +81,7 @@ def saveToLocal():
             fh.close()
         else:
             print("Database is empty!")
+            
     except (Exception, Error) as error:
         print("Error while connecting to PostgreSQL: ", error)
     
@@ -131,4 +120,3 @@ def insertDB():
         if (dbConnect):
             cursor.close()
             dbConnect.close()
-
