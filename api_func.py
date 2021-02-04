@@ -83,7 +83,7 @@ def saveToLocal():
             print("Database is empty!")
             
     except (Exception, Error) as error:
-        print("Error while connecting to PostgreSQL: ", error)
+        print(f"Error while connecting to PostgreSQL: {error}")
     
     finally:
         if (dbConnect):
@@ -114,9 +114,16 @@ def insertDB():
             dbConnect.commit()
 
     except (Exception, Error) as error:
-        print("Error while connecting to PostgreSQL:", error)
+        print(f"Error while connecting to PostgreSQL: {error}")
 
     finally:
         if (dbConnect):
             cursor.close()
             dbConnect.close()
+
+## restart snort
+def restartSnort():
+    try:
+        subprocess.run(["systemctl", "restart", "snort"], capture_output=True)
+    except (Exception, Error) as error:
+        print(f"Error while running command: {error}")
