@@ -20,10 +20,10 @@ rule_d ={
 
 def dbConnection():
     dbconnection = psycopg2.connect(user="postgres", 
-                    password="se130090", 
-                    host= "10.10.2.6", 
-                    port= "5432", 
-                    database="snort")
+                                    password="se130090", 
+                                    host= "10.10.2.6", 
+                                    port= "5432", 
+                                    database="snort")                                    
     return dbconnection
 
 ## nối chuỗi
