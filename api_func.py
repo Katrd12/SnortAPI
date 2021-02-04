@@ -1,4 +1,5 @@
 # import requests
+from typing import Counter
 import psycopg2
 from psycopg2 import Error
 
@@ -32,8 +33,8 @@ def catRule(rOption):
     return cRule
     
 def readRule():
-    # name = 'snort3-community.rules'
-    name = "local.rule"
+    name = 'snort3-community.rules'
+    # name = "local.rule"
     fh = open(name)
     rules = []
     for line in fh:
@@ -41,8 +42,10 @@ def readRule():
     return rules
 
 def splitString(iString):
-    def sHeader():
+    def sHeader():        
         header = iString[:iString.find("(")].rstrip().split(" ")
+        if (len(header) != 8):
+            header.insert(0, " ")
         return header
     def sOption():
         option = iString[iString.find("("):]
@@ -59,67 +62,73 @@ def splitString(iString):
 # # rule_d["Status"] = ""
 # # rule_d["Action"] = ""
 
-
-    # sql = 'select status, action, protocol, ip_src, port_src, direction, ip_des, port_des, rule_option from snort_rule'
-    # cursor.execute(sql)
-    # rules_input = cursor.fetchall()
-    # if len(rules_input) != 0:
-    #     rules = []
-    #     for line in rules_input:
-    #         h_pos = 0
-    #         for x in rule_d:
-    #             rule_d[x] = line[h_pos]
-    #             h_pos += 1
-    #             if h_pos == 7 :
-    #                 rule_opt = line[h_pos+1]
-    #         if (rule_d["Status"] == False):
-    #             rule_d["Status"] = "#"
-    #         elif (rule_d["Status"] == True):
-    #             rule_d["Status"] = ""
-    #         print(rule_d["Status"])
-    #         rule = catRule(rule_opt)
-    #         rules.append(rule)
-    #     print(rules[0]) 
-    #     name = "local.rule"
-    #     fh = open(name, 'w+')
-    #     for line in rules:
-    #         fh.write(line)
-    #     fh.close()
-    # else:
-    #     print("Database is empty!")
+def saveToLocal():
+    try:
+        dbConnect = dbConnection()
+        cursor = dbConnect.cursor()
+        sql = 'select status, action, protocol, ip_src, port_src, direction, ip_des, port_des, rule_option from snort_rule'
+        cursor.execute(sql)
+        rules_input = cursor.fetchall()
+        if len(rules_input) != 0:
+            rules = []
+            for line in rules_input:
+                h_pos = 0
+                for x in rule_d:
+                    rule_d[x] = line[h_pos]
+                    h_pos += 1
+                    if h_pos == 7 :
+                        rule_opt = line[h_pos+1]
+                if (rule_d["Status"] == False):
+                    rule_d["Status"] = "#"
+                elif (rule_d["Status"] == True):
+                    rule_d["Status"] = ""
+                rule = catRule(rule_opt)
+                print(rule)
+                rules.append(rule)
+            print(rules[0]) 
+            name = "local.rule"
+            fh = open(name, 'w+')
+            for line in rules:
+                fh.write(line)
+            fh.close()
+        else:
+            print("Database is empty!")
+    except (Exception, Error) as error:
+        print("Error while connecting to PostgreSQL: ", error)
+    
+    finally:
+        if (dbConnect):
+            cursor.close()
+            dbConnect.close()
 
 ## add vao database    
 def insertDB():
     try:
-        dbconnection = dbConnection()
-        cursor = dbconnection.cursor()
+        dbConnect = dbConnection()
+        cursor = dbConnect.cursor()
         rules = readRule()
         for line in rules:
             rule = line
-            header, option = splitString(rule)
-            if (len(header()) != 8):
-                header().insert(0, " ")
+            rHeader, rOption = splitString(rule)
             h_pos = 0
             for x in rule_d:
-                rule_d[x] = header()[h_pos]
+                rule_d[x] = rHeader()[h_pos]
                 h_pos += 1
             if (rule[0] == '#'):
                 rule_d["Status"] = False
             else:
                 rule_d["Status"] = True
-            print(rule_d)
             sql = f'''insert into snort_rule (action, protocol, ip_src, port_src, direction, ip_des, port_des, rule_option, status)
                     values 
-                    ('{rule_d["Action"]}', '{rule_d["Proto"]}', '{rule_d["IpSrc"]}', '{rule_d["PortSrc"]}', '{rule_d["Operation"]}', '{rule_d["IpDes"]}', '{rule_d["PortDes"]}', '{option}', '{rule_d["Status"]}')'''  
+                    ('{rule_d["Action"]}', '{rule_d["Proto"]}', '{rule_d["IpSrc"]}', '{rule_d["PortSrc"]}', '{rule_d["Operation"]}', '{rule_d["IpDes"]}', '{rule_d["PortDes"]}', '{rOption()}', '{rule_d["Status"]}')'''  
             cursor.execute(sql)
-            dbconnection.commit()
+            dbConnect.commit()
 
     except (Exception, Error) as error:
         print("Error while connecting to PostgreSQL:", error)
 
     finally:
-        if(dbconnection):
+        if (dbConnect):
             cursor.close()
-            dbconnection.close()
-            print ("Postgres connection is cloesed")
+            dbConnect.close()
 
