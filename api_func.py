@@ -39,6 +39,7 @@ def readRule():
     for line in fh:
         rules.append(line)
     return rules
+
 ## Cắt chuỗi
 def splitString(iString):
     def sHeader():        
@@ -52,20 +53,21 @@ def splitString(iString):
     return sHeader, sOption
 
 def saveToLocal():
-    try:
+    result = False
+    try:        
         dbConnect = dbConnection()
         cursor = dbConnect.cursor()
         sql = 'select status, action, protocol, ip_src, port_src, direction, ip_des, port_des, rule_option from snort_rule'
         cursor.execute(sql)
         rules_input = cursor.fetchall()
-        if len(rules_input) != 0:
+        if (len(rules_input) != 0):
             rules = []
             for line in rules_input:
                 h_pos = 0
                 for x in rule_d:
                     rule_d[x] = line[h_pos]
                     h_pos += 1
-                    if h_pos == 7:
+                    if (h_pos == 7):
                         rule_opt = line[h_pos+1]
                 if (rule_d["Status"] == False):
                     rule_d["Status"] = "#"
@@ -73,17 +75,19 @@ def saveToLocal():
                     rule_d["Status"] = ""
                 rule = catRule(rule_opt)
                 rules.append(rule)
-            print(rules[0]) 
             name = "local.rule"
             fh = open(name, 'w+')
             for line in rules:
                 fh.write(line)
             fh.close()
+            result = True        
         else:
             print("Database is empty!")
+        return result
             
     except (Exception, Error) as error:
         print(f"Error while connecting to PostgreSQL: {error}")
+        return result
     
     finally:
         if (dbConnect):
@@ -92,6 +96,7 @@ def saveToLocal():
 
 ## add vao database    
 def insertDB():
+    result = False
     try:
         dbConnect = dbConnection()
         cursor = dbConnect.cursor()
@@ -112,9 +117,11 @@ def insertDB():
                     ('{rule_d["Action"]}', '{rule_d["Proto"]}', '{rule_d["IpSrc"]}', '{rule_d["PortSrc"]}', '{rule_d["Operation"]}', '{rule_d["IpDes"]}', '{rule_d["PortDes"]}', '{rOption()}', '{rule_d["Status"]}')'''  
             cursor.execute(sql)
             dbConnect.commit()
-
+        result = True
+        return result
     except (Exception, Error) as error:
         print(f"Error while connecting to PostgreSQL: {error}")
+        return result
 
     finally:
         if (dbConnect):
