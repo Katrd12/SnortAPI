@@ -75,7 +75,8 @@ def saveToLocal():
                     rule_d["Status"] = ""
                 rule = catRule(rule_opt)
                 rules.append(rule)
-            name = "local.rule"
+            name = "local.rules"
+            # name = "/etc/snort/rules/local.rules"
             fh = open(name, 'w+')
             for line in rules:
                 fh.write(line)
@@ -134,3 +135,5 @@ def restartSnort():
         subprocess.run(["systemctl", "restart", "snort"], capture_output=True)
     except (Exception, Error) as error:
         print(f"Error while running command: {error}")
+
+saveToLocal()
