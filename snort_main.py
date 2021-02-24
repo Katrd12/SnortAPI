@@ -5,7 +5,7 @@ import api_func as apiFunc
 
 app = Flask(__name__)
 api = Api(app)
-    
+
 class snort_InsertDB(Resource): 
     def get(self):
         try:

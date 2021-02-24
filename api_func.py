@@ -2,11 +2,6 @@ import psycopg2
 from psycopg2 import Error
 import subprocess
 
-# BASE = "http://127.0.0.1:5000/"
-
-# response = requests.get(BASE + "rules")
-# print(response.json())
-
 rule_d ={
     'Status': "",
     'Action': "",
@@ -75,8 +70,7 @@ def saveToLocal():
                     rule_d["Status"] = ""
                 rule = catRule(rule_opt)
                 rules.append(rule)
-            name = "local.rules"
-            # name = "/etc/snort/rules/local.rules"
+            name = "/etc/snort/rules/local.rules"
             fh = open(name, 'w+')
             for line in rules:
                 fh.write(line)
@@ -135,5 +129,3 @@ def restartSnort():
         subprocess.run(["systemctl", "restart", "snort"], capture_output=True)
     except (Exception, Error) as error:
         print(f"Error while running command: {error}")
-
-saveToLocal()
