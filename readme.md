@@ -1,7 +1,7 @@
 - Chạy file Snort_main.py để chạy api
 - config lại ip của server api trong line:
     app.run(debug=True)
-    app.run(host='<ip máy>', port= <port được mở>,debug=True)
+    app.run(host='<ip máy>', port=<port được mở>, debug=True)
 - Edit File api_func:   
     - Function Connect to DB:
         Cấu hình để connect đến DB postgres:
