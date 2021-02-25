@@ -29,7 +29,7 @@ class snort_SaveRules(Resource):
     def get(self):
         try:
             if (apiFunc.saveToLocal()):
-                # apiFunc.restartSnort()
+                apiFunc.restartSnort()
                 return {"data:": "Success! and restart snort"} 
             else:
                 return {"data:": "Can not save rules!"}
@@ -39,7 +39,7 @@ class snort_SaveRules(Resource):
     def post(self):
         try:
             if (apiFunc.saveToLocal()):
-                # apiFunc.restartSnort()
+                apiFunc.restartSnort()
                 return {"data:": "Success!"}
             else:
                 return {"data:": "Can not save rules!"}
@@ -50,9 +50,9 @@ class snort_restart(Resource):
     def post(self):
         apiFunc.restartSnort()
 
-api.add_resource(snort_InsertDB, "/api/inserttodb")        
-api.add_resource(snort_SaveRules, "/api/saverules")
-# api.add_resource(snort_restart, "/api/restartsnort")
+api.add_resource(snort_InsertDB, "/api/snort_insert_db")        
+api.add_resource(snort_SaveRules, "/api/snort_save_rule")
+# api.add_resource(snort_restart, "/api/snort_restart")
 
 
 if __name__ == "__main__":
