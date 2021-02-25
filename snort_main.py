@@ -50,9 +50,9 @@ class snort_restart(Resource):
     def post(self):
         apiFunc.restartSnort()
 
-api.add_resource(snort_InsertDB, "/inserttodb")        
-api.add_resource(snort_SaveRules, "/saverules")
-# api.add_resource(snort_restart, "/restartsnort")
+api.add_resource(snort_InsertDB, "/api/inserttodb")        
+api.add_resource(snort_SaveRules, "/api/saverules")
+# api.add_resource(snort_restart, "/api/restartsnort")
 
 
 if __name__ == "__main__":
