@@ -1,10 +1,14 @@
 from flask import Flask
 from flask_restful import Api, Resource
 import api_func as apiFunc
-
+import logging
 
 app = Flask(__name__)
 api = Api(app)
+
+# logging.basicConfig(filename= "api.log",
+#                     level=logging.DEBUG,
+#                     format= f'%(levelname)s %(name)s %(threadName)s : %(message)s')
 
 class snort_InsertDB(Resource): 
     def get(self):
@@ -52,7 +56,7 @@ class snort_restart(Resource):
 
 api.add_resource(snort_InsertDB, "/api/inserttodb")        
 api.add_resource(snort_SaveRules, "/api/saverules")
-# api.add_resource(snort_restart, "/api/restartsnort")
+api.add_resource(snort_restart, "/api/restartsnort")
 
 
 if __name__ == "__main__":
