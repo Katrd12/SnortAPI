@@ -51,14 +51,16 @@ class snort_SaveRules(Resource):
             return {"data:": "Can not save rules!"}
 
 class snort_restart(Resource):
-    def post(self):
+    def get(self):
         apiFunc.restartSnort()
+        return {"data:": "Success! and restart snort"}
 
 
-api.add_resource(snort_InsertDB, "/api/inserttodb")        
-api.add_resource(snort_SaveRules, "/api/saverules")
-# api.add_resource(snort_restart, "/api/restartsnort")
+api.add_resource(snort_SaveRules, "/api/snort_save_rule")
+api.add_resource(snort_restart, "/api/snort_restart")
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    apiFunc.emptyDatabase()
+    apiFunc.insertDB()
+    app.run(debug=True,host='0.0.0.0',port='13337')
